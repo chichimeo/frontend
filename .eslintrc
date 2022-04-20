@@ -1,0 +1,14 @@
+{
+  "extends": [
+      "plugin:vue/recommended",
+      "@vue/standard"
+    ],
+    "rules": {
+      "no-console": 0,
+      "no-debugger": 0,
+      "vue/component-name-in-template-casing": [2, "kebab-case"]
+    },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  }
+}
