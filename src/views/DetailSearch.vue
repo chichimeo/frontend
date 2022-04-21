@@ -142,7 +142,7 @@
             <span class="padding: 0 auto">Processing</span>
           </div>
           <div
-            v-else-if=" !ai || !ai.id || ai.score === 0"
+            v-else-if=" !ai || !sandbox.id || sandbox.score === 0"
             style="text-align: center"
           >
             <span class="padding: 0 auto">Not found</span>
@@ -157,9 +157,9 @@
         <div class="column">
           <box>
             <div slot="header">
-              AI Engine
+              Sandbox
             </div>
-            <template v-if="ai && ai.id">
+            <template v-if="ai && sandbox.id">
               <div class="field columns">
                 <label class="label column is-1">Source</label>
                 <p class="column">
@@ -169,19 +169,19 @@
               <div class="field columns">
                 <label class="label column is-1">MD5</label>
                 <p class="column">
-                  {{ ai.file.md5 }}
+                  {{ sandbox.file.md5 }}
                 </p>
               </div>
               <div class="field columns">
                 <label class="label column is-1">SHA256</label>
                 <p class="column">
-                  {{ ai.file.sha256 }}
+                  {{ sandbox.file.sha256 }}
                 </p>
               </div>
               <div class="field columns">
                 <label class="label column is-1">Score</label>
                 <p class="column">
-                  {{ ai.score }} / 10
+                  {{ sandbox.score }} / 10
                 </p>
               </div>
             </template>
@@ -519,7 +519,7 @@ export default {
       return this.opswat && this.opswat.scan_results && this.opswat.scan_results.scan_details ? this.opswat.scan_results.scan_details : {}
     },
     chartAI () {
-      if (!this.ai || !this.ai.id) {
+      if (!this.sandbox || !this.sandbox.id) {
         return {
           labels: [ 'Clean' ],
           datasets: [
@@ -545,7 +545,7 @@ export default {
       if (this.loading) {
         return false
       }
-      if (!this.virustotal.scan_id && !this.my_db.source && !this.opswat.data_id && !this.ai.id) {
+      if (!this.virustotal.scan_id && !this.my_db.source && !this.opswat.data_id && !this.sandbox.id) {
         return true
       }
       return false
@@ -596,8 +596,8 @@ export default {
         this.my_db = body.data.data.my_db ? body.data.data.my_db : {}
         this.opswat = body.data.data.opswat ? body.data.data.opswat : {}
         this.virustotal = body.data.data.virustotal ? body.data.data.virustotal : {}
-        this.ai = body.data.data.ai && body.data.data.ai.info ? body.data.data.ai.info : {}
-        this.ai.file = body.data.data.ai && body.data.data.ai.target.file ? body.data.data.ai.target.file : {}
+        this.sandbox = body.data.data.sandbox && body.data.data.sandbox.info ? body.data.data.sandbox.info : {}
+        this.sandbox.file = body.data.data.sandbox && body.data.data.sandbox.target.file ? body.data.data.sandbox.target.file : {}
         // }
       }).finally(() => {
         this.isLoading = false
@@ -653,14 +653,14 @@ export default {
     scanSandbox (id) {
       return this.$http.get(`api/v1/scan/sandbox/${id}`).then(body => {
         if (!body || !body.data) {
-          this.ai = {}
+          this.sandbox = {}
           return
         }
         if (!body.data.data) {
           return
         }
-        this.ai = body.data.data.info ? body.data.data.info : {}
-        this.ai.file = body.data.data.target && body.data.data.target.file ? body.data.data.target.file : {}
+        this.sandbox = body.data.data.info ? body.data.data.info : {}
+        this.sandbox.file = body.data.data.target && body.data.data.target.file ? body.data.data.target.file : {}
         this.loading.sandbox = false
         clearInterval(this.interval2)
         this.isLoading = false
