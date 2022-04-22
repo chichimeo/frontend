@@ -142,10 +142,16 @@
             <span class="padding: 0 auto">Processing</span>
           </div>
           <div
-            v-else-if=" !ai || !sandbox.id || sandbox.score === 0"
+            v-else-if=" !sandbox || !sandbox.id"
             style="text-align: center"
           >
             <span class="padding: 0 auto">Not found</span>
+          </div>
+          <div
+            v-else-if="sandbox.score < 8"
+            style="text-align: center"
+          >
+            <span class="padding: 0 auto">Clean</span>
           </div>
           <div
             v-else
@@ -159,11 +165,11 @@
             <div slot="header">
               Sandbox
             </div>
-            <template v-if="ai && sandbox.id">
+            <template v-if="sandbox && sandbox.id">
               <div class="field columns">
                 <label class="label column is-1">Source</label>
                 <p class="column">
-                  Ai Engine
+                  Sandbox
                 </p>
               </div>
               <div class="field columns">
@@ -408,7 +414,7 @@ export default {
       my_db: {},
       virustotal: {},
       opswat: {},
-      ai: {},
+      sandbox: {},
       // },
       opt: {
         responsive: true,
@@ -535,8 +541,8 @@ export default {
         labels: [ 'Threat' ],
         datasets: [
           {
-            backgroundColor: ['#ff1f4a'],
-            data: [1]
+            backgroundColor: ['#ff1f4a', '#767171'],
+            data: [this.opswat.scan_results.total_detected_avs, this.opswat.scan_results.total_avs]
           }
         ]
       }
@@ -656,10 +662,10 @@ export default {
           this.sandbox = {}
           return
         }
-        if (!body.data.data) {
+        if (!body.data.data || !body.data.data.info) {
           return
         }
-        this.sandbox = body.data.data.info ? body.data.data.info : {}
+        this.sandbox = body.data.data.info
         this.sandbox.file = body.data.data.target && body.data.data.target.file ? body.data.data.target.file : {}
         this.loading.sandbox = false
         clearInterval(this.interval2)
