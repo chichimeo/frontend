@@ -136,13 +136,13 @@ export default {
       let formData = new FormData()
       formData.append('file', this.fileData)
       return this.$http.post(`api/v1/lookup/file`, formData, { headers: { 'Content-Type': 'multipart/form-data' }, timeout: 600000 }).then(body => {
-        if (!body || !body.data) {
+        if (!body || !body.data || !body.data.data) {
           return
         }
         D({
           'scanIDVTT': body.data.data.virustotal.md5,
           'scanIDOPS': body.data.data.opswat.data_id,
-          'sandboxID': body.data.data.sandbox.task_id
+          'sandboxID': body.data.data.sandbox && body.data.data.sandbox.task_id ? body.data.data.sandbox.task_id : ''
         })
         this.$router.push({ name: 'search-details', params: { type: 'file', hash: body.data.data.virustotal.md5 } })
       })
