@@ -1,0 +1,170 @@
+@import "~@hiendv/bem-sass";
+
+@keyframes spinAround {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+}
+
+html {
+  font-size: 14px;
+}
+
+.widget {
+  margin-bottom: 0;
+  padding: 0.75rem;
+  border: 1px solid hsl(0, 0%, 86%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .title {
+    color: currentColor !important;;
+  }
+
+  @mixin widget-color($color) {
+    color: darken($color, 15%) !important;
+    background-color: lighten($color, 30%) !important;
+    border-color: lighten($color, 25%) !important;
+  }
+  
+  @include m("green") { @include widget-color(#78b553); }
+  @include m("blue") { @include widget-color(#3366cc); }
+  @include m("gray") { @include widget-color(#6d819c); }
+  @include m("yellow") { @include widget-color(#d59943); }
+  @include m("pink") { @include widget-color(#dd4477); }
+  @include m("red") { @include widget-color(#dc3912); }
+  @include m("purple") { @include widget-color(#6633cc); }
+}
+
+.chart-loader,
+.graph-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  opacity: .9;
+  z-index: 9999;
+  transition: opacity .3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.legend-choices {
+  margin-top: .7rem;
+  li {
+    a.tag {
+      color: #fff;
+      margin-right: 5px;
+    }
+    a:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.v-select .vs__dropdown-menu {
+  max-height: 200px;
+}
+
+.dashboard.is-dark {
+  .sidebar-menu .menu-list {
+    a.has-children::after {
+      border-color: #c3c3c6;
+    }
+
+    a.has-children.is-active::after {
+      border-color: #fff;
+    }
+  }
+
+  .vs__selected {
+    color: #f2f2f2;
+    background-color: #2a2d36;
+  }
+  .vs__clear,
+  .vs__open-indicator,
+  .vs__deselect {
+    fill: #f2f2f2;
+  }
+
+  .vs__dropdown-menu {
+    background-color: #353944;
+  }
+
+  .vs__dropdown-option {
+    color: #f2f2f2;
+  }
+
+  .vs--disabled .vs__clear,
+  .vs--disabled .vs__dropdown-toggle,
+  .vs--disabled .vs__open-indicator,
+  .vs--disabled .vs__search, 
+  .vs--disabled .vs__selected { 
+    background-color: transparent;
+  }
+
+  .vs--single .vs__selected {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .box {
+    border-color: #40455355 !important;
+    color: #dddddf
+  }
+}
+
+
+::-webkit-scrollbar-track
+{
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar
+{
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 5px;
+	background-color: #55555577;
+}
+
+.v-select {
+  .vs__dropdown-toggle {
+    padding: calc(.5em - 3px) 5px;
+  
+    .vs__selected,
+    .vs__search {
+      margin: 2px;
+    }
+  }
+}
+
+.sidebar-menu {
+  .menu-list__sub {
+    a {
+      white-space: normal;
+    }
+    a.has-children {
+      padding-right: 2rem;
+    }
+  }
+}
+
+.navbar-start {
+  width: 100%;
+  .btn-download { 
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
