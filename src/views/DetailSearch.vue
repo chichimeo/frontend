@@ -45,7 +45,7 @@
       />
     </div>
     <div
-      v-else-if="noMatch && !isLoading"
+      v-else-if="noMatch"
       class="my-6"
       style="text-align: center"
     >
@@ -59,7 +59,7 @@
       </div>
       <button
         class="button is-primary my-6"
-        @click.prevent="router.push({ name: 'search' })"
+        @click.prevent="$router.push({ name: 'search' })"
       >
         Try a new search
       </button>
@@ -68,10 +68,13 @@
       v-else
       class="my-6"
     >
-      <div class="mydb columns">
+      <div
+        v-if="engines.ENGINE_MALWARE"
+        class="mydb columns"
+      >
         <div class="column is-1">
           <chart
-            ref="threat"
+            ref="chartMyDB"
             :chart-data="chartMyDB"
             :options="opt"
           />
@@ -131,10 +134,13 @@
           </box>
         </div>
       </div>
-      <div class="mydb columns">
+      <div
+        v-if="engines.ENGINE_AI"
+        class="mydb columns"
+      >
         <div class="column is-1">
           <chart
-            ref="threat"
+            ref="chartAI"
             :chart-data="chartAI"
             :options="opt"
           />
@@ -142,19 +148,19 @@
             <span class="padding: 0 auto">Processing</span>
           </div>
           <div
-            v-else-if=" aiResult === 0"
+            v-else-if=" aiResult === '0'"
             style="text-align: center"
           >
             <span class="padding: 0 auto">Clean</span>
           </div>
           <div
-            v-else-if=" aiResult === -1"
+            v-else-if=" aiResult === '-1'"
             style="text-align: center"
           >
             <span style="text-align: center">Not found</span>
           </div>
           <div
-            v-else-if=" aiResult === 1"
+            v-else-if=" aiResult === '1'"
             style="text-align: center"
           >
             <span style="text-align: center">Threat</span>
@@ -163,7 +169,7 @@
             v-else
             style="text-align: center"
           >
-            <span class="padding: 0 auto">Error </span>
+            <span class="padding: 0 auto">Processing </span>
           </div>
         </div>
         <div class="column">
@@ -173,19 +179,19 @@
             </div>
             <template>
               <div
-                v-if=" aiResult === 0"
+                v-if=" aiResult === '0'"
                 style="text-align: center"
               >
                 <span class="padding: 0 auto">This file is clean</span>
               </div>
               <div
-                v-else-if=" aiResult === -1"
+                v-else-if=" aiResult === '-1'"
                 style="text-align: center"
               >
                 <span style="text-align: center">This file is not found</span>
               </div>
               <div
-                v-else-if=" aiResult === 1"
+                v-else-if=" aiResult === '1'"
                 style="text-align: center"
               >
                 <span style="text-align: center">This file is suspicious</span>
@@ -195,16 +201,19 @@
                 v-else
                 style="text-align: center"
               >
-                <span class="padding: 0 auto">Error in processing</span>
+                <span class="padding: 0 auto">This file isprocessing</span>
               </div>
             </template>
           </box>
         </div>
       </div>
-      <div class="mydb columns">
+      <div
+        v-if="engines.ENGINE_SANDBOX"
+        class="mydb columns"
+      >
         <div class="column is-1">
           <chart
-            ref="threat"
+            ref="chartSandbox"
             :chart-data="chartSandbox"
             :options="opt"
           />
@@ -264,10 +273,14 @@
           </box>
         </div>
       </div>
-      <div class="mydb columns">
+      <div
+        v-if="engines.ENGINE_VTT"
+        class="mydb columns"
+      >
         <div class="column is-1">
           <chart
-            ref="skills_chart"
+            v-if="chartVTT"
+            ref="chartVTT"
             :chart-data="chartVTT"
             :options="opt"
           />
@@ -360,10 +373,14 @@
           </box>
         </div>
       </div>
-      <div class="mydb columns">
+      <div
+        v-if="engines.ENGINE_OPSWAT"
+        class="mydb columns"
+      >
         <div class="column is-1">
           <chart
-            ref="skills_chart"
+            v-if="chartOPS"
+            ref="chartOPS"
             :chart-data="chartOPS"
             :options="opt"
           />
@@ -497,7 +514,7 @@ export default {
           display: false
         }
       },
-      isLoading: false,
+      isLoading: true,
       verbose_msg: 0,
       interval: null,
       interval1: null,
@@ -510,7 +527,8 @@ export default {
         ops: false,
         ai: false
       },
-      aiResult: -2
+      aiResult: -2,
+      engines: {}
     }
   },
   computed: {
@@ -548,7 +566,7 @@ export default {
       }
     },
     chartAI () {
-      if (this.aiResult === 0) {
+      if (this.aiResult === '0') {
         return {
           labels: [ 'Clean' ],
           datasets: [
@@ -560,7 +578,7 @@ export default {
         }
       }
 
-      if (this.aiResult === 1) {
+      if (this.aiResult === '1') {
         return {
           labels: [ 'Threat' ],
           datasets: [
@@ -590,7 +608,7 @@ export default {
         datasets: [
           {
             backgroundColor: ['#ff1f4a', '#767171'],
-            data: [this.virustotal.positives, this.virustotal.total]
+            data: [this.virustotal.positives, this.virustotal.total - this.virustotal.positives]
           }
         ]
       }
@@ -612,7 +630,7 @@ export default {
         datasets: [
           {
             backgroundColor: ['#ff1f4a', '#767171'],
-            data: [this.virustotal.positives, this.virustotal.total]
+            data: [this.opswat.scan_results.total_detected_avs, this.opswat.scan_results.total_avs - this.opswat.scan_results.total_detected_avs]
           }
         ]
       }
@@ -624,7 +642,7 @@ export default {
       return this.opswat && this.opswat.scan_results && this.opswat.scan_results.scan_details ? this.opswat.scan_results.scan_details : {}
     },
     chartSandbox () {
-      if (!this.sandbox || !this.sandbox.id) {
+      if (!this.sandbox || !this.sandbox.id || this.sandbox.score < 8) {
         return {
           labels: [ 'Clean' ],
           datasets: [
@@ -641,24 +659,26 @@ export default {
         datasets: [
           {
             backgroundColor: ['#ff1f4a', '#767171'],
-            data: [this.opswat.scan_results.total_detected_avs, this.opswat.scan_results.total_avs]
+            data: [1]
           }
         ]
       }
     },
     noMatch () {
-      if (this.loading) {
+      if (this.isLoading || this.loading.my_db || this.loading.vtt || this.loading.opswat || this.loading.ai || this.loading.sandbox) {
         return false
       }
       if (this.$route.params.type === 'hash' && !this.virustotal.scan_id && !this.my_db.source && !this.opswat.data_id && !this.sandbox.id) {
         return true
       }
 
-      if (this.$route.params.type === 'file' && !this.virustotal.scan_id && !this.my_db.source && !this.opswat.data_id && !this.sandbox.id && this.aiResult === -2) {
+      if (this.$route.params.type === 'file' && !this.virustotal.scan_id && !this.my_db.source && !this.opswat.data_id && !this.sandbox.id && this.aiResult === '-2') {
         return true
       }
       return false
     }
+  },
+  created () {
   },
   mounted () {
     if (!this.$route || !this.$route.params.hash || !this.$route.params.type) {
@@ -666,41 +686,77 @@ export default {
     }
 
     this.hash = this.$route.params.hash
-    if (this.$route.params.type === 'hash') {
-      this.lookup(this.hash)
-    }
-
-    if (this.$route.params.type === 'file') {
-      this.isLoading = true
-      var self = this
-      this.loading = {
-        mydb: true,
-        vtt: true,
-        sandbox: true,
-        ops: true
+    this.isLoading = true
+    this.getEngines().finally(() => {
+      if (this.$route.params.type === 'hash') {
+        this.lookup(this.hash)
       }
-      this.lookupHashLocal(this.$route.params.hash)
 
-      this.interval = setInterval(() => {
-        self.scanOPS(B.scanIDOPS)
-      }, 10000)
-      this.interval1 = setInterval(() => {
-        self.lookupFileVTT(B.scanIDVTT)
-      }, 10000)
-      this.interval2 = setInterval(() => {
-        self.scanSandbox(B.sandboxID)
-      }, 10000)
-      this.interval3 = setInterval(() => {
-        self.scanAI(this.$route.params.hash)
-      }, 10000)
-    }
+      if (this.$route.params.type === 'file') {
+        var self = this
+        this.loading = {
+          mydb: true,
+          vtt: true,
+          sandbox: true,
+          ops: true
+        }
+        if (this.engines.ENGINE_MALWARE) {
+          this.lookupHashLocal(this.$route.params.hash)
+        }
+
+        if (this.engines.ENGINE_OPSWAT) {
+          this.interval = setInterval(() => {
+            self.scanOPS(B.scanIDOPS)
+          }, 10000)
+        }
+
+        if (this.engines.ENGINE_VTT) {
+          this.interval1 = setInterval(() => {
+            self.lookupFileVTT(B.scanIDVTT)
+          }, 10000)
+        }
+
+        if (this.engines.ENGINE_SANDBOX) {
+          this.interval2 = setInterval(() => {
+            self.scanSandbox(B.sandboxID)
+          }, 10000)
+        }
+
+        if (this.engines.ENGINE_AI) {
+          this.interval3 = setInterval(() => {
+            self.scanAI(this.$route.params.hash)
+          }, 10000)
+        }
+      }
+    })
+  },
+  destroyed () {
+    clearInterval(this.interval)
+    clearInterval(this.interval1)
+    clearInterval(this.interval2)
+    clearInterval(this.interval3)
   },
   methods: {
+    getEngines () {
+      return this.$http.get(`/api/v1/engine`).then(body => {
+        if (!body || !body.data || !body.data.data) {
+          return
+        }
+        this.engines = Object.assign({}, ...body.data.data.map(s => ({ [s.name]: s.enabled })))
+      })
+    },
     format,
     lookup (hash) {
       this.isLoading = true
+      this.loading = {
+        my_db: true,
+        ai: true,
+        sandbox: true,
+        vtt: true,
+        opswat: true
+      }
       return this.$http.get(`api/v1/lookup/hash/${hash}`).then(body => {
-        if (!body || !body.data) {
+        if (!body || !body.data || !body.data.data) {
           return
         }
 
@@ -711,19 +767,49 @@ export default {
         this.sandbox = body.data.data.sandbox && body.data.data.sandbox.info ? body.data.data.sandbox.info : {}
         this.sandbox.file = body.data.data.sandbox && body.data.data.sandbox.target.file ? body.data.data.sandbox.target.file : {}
 
+        if (!body.data.data.aiEngine || !body.data.data.aiEngine.status) {
+          return
+        }
         switch (body.data.data.aiEngine.status) {
           case 'not found': {
-            this.aiResult = -1
+            this.aiResult = '-1'
             return
           }
           case 'reported': {
-            this.aiResult = body.data.data.classfication ? body.data.data.classfication : -2
+            this.aiResult = body.data.data.aiEngine.classification
           }
         }
         // }
       }).finally(() => {
+        this.updateDatabase()
         this.isLoading = false
+        this.loading = {
+          my_db: false,
+          ai: false,
+          sandbox: false,
+          vtt: false,
+          opswat: false
+        }
       })
+    },
+    updateDatabase () {
+      if (!this.my_db) {
+        return
+      }
+      if (this.sandbox.score >= 8 || this.virustotal.positives > 0 || this.opswat.scan_results.total_detected_avs > 0 || this.aiResult === '1') {
+        let content = {}
+        content.md5 = this.hash
+        if (this.virustotal.positives > 0) {
+          content.sha1 = this.virustotal.sha1.toLowerCase()
+          content.sha256 = this.virustotal.sha256.toLowerCase()
+        }
+        if (this.opswat.scan_results.total_detected_avs > 0) {
+          content.sha1 = this.opswat.file_info.sha1.toLowerCase()
+          content.sha256 = this.opswat.file_info.sha256.toLowerCase()
+        }
+        return this.$http.post(`/api/v1/malware/info`, content).then(body => {
+        })
+      }
     },
     formatTime (time) {
       let pair = Array.from(time)
@@ -733,7 +819,8 @@ export default {
     },
     lookupFileVTT (id) {
       return this.$http.get(`api/v1/scan/vtt/${id}`).then(body => {
-        if (!body || !body.data || !body.data.data) {
+        console.log('body.data', body.data)
+        if (!body || !body.data || !body.data.data || body.data.data.response_code === -2) {
           this.virustotal = {}
           return
         }
@@ -741,7 +828,7 @@ export default {
         if (!body.data.data.response_code) {
           return
         }
-        clearInterval(this.interval)
+        clearInterval(this.interval1)
         this.isLoading = false
         this.loading.vtt = false
       })
@@ -767,7 +854,7 @@ export default {
         if (body.data.data.process_info.progress_percentage !== 100) {
           return
         }
-        clearInterval(this.interval1)
+        clearInterval(this.interval)
         this.isLoading = false
         this.loading.ops = false
       })
@@ -790,24 +877,27 @@ export default {
     },
     scanAI (hash) {
       return this.$http.get(`api/v1/scan/aiengine/${hash}`).then(body => {
-        if (!body || !body.data || !body.data.data) {
-          this.sandbox = {}
+        console.log(body)
+        if (!body || !body.data) {
+          this.aiResult = {}
           return
         }
+
+        this.loading.ai = false
+        clearInterval(this.interval3)
+        this.isLoading = false
         let result = body.data.data.status
         switch (result) {
           case 'not found': {
             this.aiResult = -1
-            return
+            break
           }
           case 'reported': {
-            this.aiResult = body.data.data.classfication ? body.data.data.classfication : -2
-            return
+            console.log(body.data.data.classification)
+            this.aiResult = body.data.data.classification
+            break
           }
         }
-        this.loading.ai = false
-        clearInterval(this.interval3)
-        this.isLoading = false
       })
     }
   }

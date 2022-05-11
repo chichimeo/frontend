@@ -103,7 +103,6 @@
 import { bug, file, search, cloudUpload } from 'octicons-vue'
 import { Tabs, Tab } from '@cyradar/ui'
 import { D } from '../global.js'
-
 export default {
   components: { Tabs, Tab },
   data () {
@@ -140,11 +139,11 @@ export default {
           return
         }
         D({
-          'scanIDVTT': body.data.data.virustotal.md5,
-          'scanIDOPS': body.data.data.opswat.data_id,
+          'scanIDVTT': body.data.data.virustotal && body.data.data.virustotal.scan_id ? body.data.data.virustotal.scan_id : '',
+          'scanIDOPS': body.data.data.opswat && body.data.data.opswat.data_id ? body.data.data.opswat.data_id : '',
           'sandboxID': body.data.data.sandbox && body.data.data.sandbox.task_id ? body.data.data.sandbox.task_id : ''
         })
-        this.$router.push({ name: 'search-details', params: { type: 'file', hash: body.data.data.virustotal.md5 } })
+        this.$router.push({ name: 'search-details', params: { type: 'file', hash: body.data.data.md5 } })
       })
         .finally(() => {
           this.loading = false
