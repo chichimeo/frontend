@@ -58,7 +58,7 @@
                 {{ $l('engineEnabled','Engine enabled') }}
               </p>
               <p class="title">
-                {{ count }}
+                {{ engines.enabled }}
               </p>
             </div>
           </div>
@@ -71,14 +71,14 @@
         <box class="widget widget--purple">
           <div
             style="cursor: pointer;"
-            @click="$router.push({ name: 'malwares' })"
+            @click="$router.push({ name: 'engines' })"
           >
             <div class="has-text-centered">
               <p class="heading">
                 {{ $l('totalEngine','Detected Engines') }}
               </p>
               <p class="title">
-                {{ count }}
+                {{ engines.total }}
               </p>
             </div>
           </div>
@@ -207,7 +207,11 @@ export default {
         startDate: daysAgo7.toISOString(),
         endDate: today.toISOString()
       },
-      count: 199
+      count: 199,
+      engines: {
+        enabled: 0,
+        total: 0
+      }
     }
   },
   computed: {
@@ -471,6 +475,8 @@ export default {
         if (!body || !body.data || !body.data.data) {
           return
         }
+        this.engines.total = body.data.data.length
+        this.engines.enabled = body.data.data.filter(x => x.enabled === true).length
 
         let x = []
         for (let i = 0; i < body.data.data.length; i++) {
