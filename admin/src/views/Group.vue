@@ -26,11 +26,23 @@
       </div>
     </h2>
     <box>
+      <div>
+        <input
+          v-model="filterString"
+          class="input"
+          type="search"
+          :class="queryFailed?'is-danger':''"
+          required
+          placeholder="Filter records"
+        >
+      </div>
+
       <data-table
         ref="table"
         :items="items"
         :theme="$_ui_theme_tables"
-        sort-by="_id"
+        sort-by="id"
+        :filter.sync="filterString"
       >
         <data-column
           field="name"
@@ -38,10 +50,19 @@
           :sortable="false"
         />
         <data-column
-          field="updatedAt"
-          :label="$t('updatedAt')"
+          field="permissions"
+          :label="$t('permissions')"
           :sortable="false"
-        />
+        >
+          <template slot-scope="{ value }">
+            <span
+
+              v-for="it in value"
+              :key="it"
+              class="tag is-success is-light mr-1"
+            >{{ it.feature }}: {{ it.action }}</span>
+          </template>
+        </data-column>
         <data-column
           :label="$t('actions')"
           class="has-text-centered"
@@ -51,21 +72,21 @@
             <div class="has-text-centered">
               <button
                 :disabled="B.scopes['read:groups'] ? false :true"
+                class="button is-text"
                 @click.prevent="$router.push({
                   name: 'group-details',
                   params: { groupID: props.item.name, edit: true },
                 })"
-                class="button is-text"
               >
                 <octicon :icon="eye" /> <span>{{ $t('details') }}</span>
               </button>
               <button
                 :disabled="B.scopes['update:groups'] ? false :true"
+                class="button is-text"
                 @click.prevent="$router.push({
                   name: 'group-update',
                   params: { groupID: props.item.name, edit: true },
                 })"
-                class="button is-text"
               >
                 <octicon :icon="pencil" /> <span>{{ $t('edit') }}</span>
               </button>
@@ -147,6 +168,9 @@ export default {
     return {
       modal: false,
       item: {},
+      filter: {},
+      filterString: '',
+      queryFailed: false,
       B
     }
   },
@@ -171,35 +195,14 @@ export default {
     }
   },
   methods: {
-    // items () {
-    //   return {
-    //     items: [{
-    //       name: 'root',
-    //       createdAt: '20-04-2022',
-    //       updatedAt: '22-04-2022',
-    //       permissions: [
-    //         {
-    //           id: '1',
-    //           action: 'read',
-    //           feature: 'overview'
-    //         },
-    //         {
-    //           id: '2',
-    //           action: 'read',
-    //           feature: 'malware'
-    //         },
-    //         {
-    //           id: '3',
-    //           action: 'create',
-    //           feature: 'malware'
-    //         }
-    //       ],
-    //       _id: '1'
-    //     }],
-    //     total: 1
-    //   }
-    // },
     items (filter, order, pagination) {
+      if (!filter.query.trim()) {
+        this.queryFailed = false
+      }
+
+      if (filter.query !== this.convertObjectToString(this.filter)) {
+        this.filter = this.converStringToObject(filter.query)
+      }
       return this.$http.get(`/api/v1/group`, {
         params: {
           filter: this.filter ? this.filter : {},
@@ -252,11 +255,56 @@ export default {
         type: 'success',
         text: this.$t('copyToClipboard')
       })
+    },
+    convertObjectToString (val) {
+      if (val === {}) {
+        return
+      }
+
+      let result = ''
+      for (const property in val) {
+        if (result) {
+          result = result.concat(', ')
+        }
+
+        result = result.concat(`${property}: ${val[property]}`)
+      }
+      return result
+    },
+    converStringToObject (data) {
+      if (!data.trim()) {
+        this.queryFailed = false
+        return {}
+      }
+
+      const regex = /([^,]+)/gm
+      const regexParseKey = /([a-zA-Z0-9_ ]+):(.*)/
+      let found = data.match(regex)
+      let result = {}
+
+      for (let i = 0; i < found.length; i++) {
+        if (found[i].trim() === '') {
+          continue
+        }
+
+        let foundKey = found[i].trim().match(regexParseKey)
+        if (!foundKey || foundKey.length !== 3) {
+          this.queryFailed = true
+          return {}
+        }
+
+        result[foundKey[1].trim()] = foundKey[2].trim()
+      }
+      this.queryFailed = false
+      return result
     }
   }
 }
 </script>
 <style lang='scss'>
+div[data-elm="filter"]{
+  display: none !important;
+}
 pre {
   padding: 0.5em;
   background: none;

@@ -27,6 +27,9 @@
     </h2>
     <box>
       <div>
+        <octicon :icon="bug" :scale="2.5" /> <div class="title">{{ $t('Virus Share') }}</div>
+      </div>
+      <div>
         <input
           v-model="filterString"
           class="input"
@@ -36,11 +39,12 @@
           placeholder="Filter records"
         >
       </div>
+
       <data-table
         ref="table"
         :items="items"
         :theme="$_ui_theme_tables"
-        sort-by="_id"
+        sort-by="id"
         :filter.sync="filterString"
       >
         <data-column
@@ -234,7 +238,7 @@
 </template>
 <script>
 import { DataTable, DataColumn, Modal } from '@cyradar/ui'
-import { plus, x, pencil, clock, clippy } from 'octicons-vue'
+import { plus, x, pencil, clock, clippy, bug } from 'octicons-vue'
 import alertify from 'alertify.js'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css'
@@ -253,7 +257,8 @@ export default {
       filterString: '',
       queryFailed: false,
       groups: [],
-      B
+      B,
+      bug
     }
   },
   computed: {
@@ -410,6 +415,9 @@ export default {
 }
 </script>
 <style lang='scss'>
+div[data-elm="filter"]{
+  display: none !important;
+}
 pre {
   padding: 0.5em;
   background: none;

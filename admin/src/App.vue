@@ -16,9 +16,9 @@
       <template slot="login-right">
         <div class="columns is-centered">
           <div class="column is-half">
-            <img src="./assets/279052397_657448228686449_2987213060671790641_n.png">
+            <img src="./assets/MicrosoftTeams-image.png">
             <a
-              href="http://10.3.145.108:8082"
+              href="http://localhost:8082"
               class="button is-fullwidth is-primary"
               target="blank"
             >
@@ -27,8 +27,6 @@
           </div>
         </div>
       </template>
-      <!-- <router-view /> -->
-      <!-- <notifications /> -->
     </dashboard>
   </div>
 </template>
@@ -36,11 +34,7 @@
 <script>
 
 export default {
-  name: 'App',
-  mounted () {
-    const elements = document.getElementsByClassName('login__logo')
-    while (elements.length > 0) elements[0].remove()
-  }
+  name: 'App'
 }
 </script>
 <style lang="scss">

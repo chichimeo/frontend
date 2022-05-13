@@ -111,7 +111,7 @@
                   </div>
                   <div style="padding: 0.5rem">
                     <h5 class="p-0 title">
-                      {{ $t('Virus share') }}
+                      {{ $t('Virus Share') }}
                     </h5>
                   </div>
                 </div>

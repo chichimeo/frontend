@@ -321,6 +321,9 @@ export default {
 }
 </script>
 <style lang='scss'>
+div[data-elm="filter"]{
+  display: none !important;
+}
 pre {
   padding: 0.5em;
   background: none;
