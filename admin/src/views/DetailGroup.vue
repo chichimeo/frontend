@@ -38,6 +38,7 @@
               </div>
               <div class="column is-narrow">
                 <button
+                  :disabled="B.scopes['update:groups'] ? false : true"
                   class="button is-primary is-small is- is-light"
                   @click.prevent="customizePermission"
                 >
@@ -142,6 +143,8 @@
 import { DataTable, DataColumn } from '@cyradar/ui'
 import { arrowSmallLeft, check, sync } from 'octicons-vue'
 import 'vue-select/dist/vue-select.css'
+import { B } from '../global.js'
+
 export default {
   name: 'GroupDetails',
   components: { DataTable, DataColumn },
@@ -163,7 +166,8 @@ export default {
       },
       products: [],
       permissions: [],
-      type: ''
+      type: '',
+      B
     }
   },
   mounted () {

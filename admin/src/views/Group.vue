@@ -16,6 +16,7 @@
 
         <div class="level-right">
           <button
+            :disabled="B.scopes['create:groups'] ? false : true"
             class="button is-primary"
             @click.prevent="modal = !modal"
           >
@@ -48,25 +49,28 @@
         >
           <template slot-scope="props">
             <div class="has-text-centered">
-              <router-link
-                :to="{
+              <button
+                :disabled="B.scopes['read:groups'] ? false :true"
+                @click.prevent="$router.push({
                   name: 'group-details',
                   params: { groupID: props.item.name, edit: true },
-                }"
+                })"
                 class="button is-text"
               >
                 <octicon :icon="eye" /> <span>{{ $t('details') }}</span>
-              </router-link>
-              <router-link
-                :to="{
+              </button>
+              <button
+                :disabled="B.scopes['update:groups'] ? false :true"
+                @click.prevent="$router.push({
                   name: 'group-update',
                   params: { groupID: props.item.name, edit: true },
-                }"
+                })"
                 class="button is-text"
               >
                 <octicon :icon="pencil" /> <span>{{ $t('edit') }}</span>
-              </router-link>
+              </button>
               <button
+                :disabled="B.scopes['delete:groups'] ? false :true"
                 class="button is-text"
                 @click.prevent="destroy(props.item.name)"
               >
@@ -135,13 +139,15 @@ import { DataTable, DataColumn, Modal } from '@cyradar/ui'
 import { eye, plus, x, pencil, clock, clippy } from 'octicons-vue'
 import clipboard from '@/clipboard.js'
 import alertify from 'alertify.js'
+import { B } from '../global.js'
 
 export default {
   components: { DataTable, DataColumn, Modal },
   data () {
     return {
       modal: false,
-      item: {}
+      item: {},
+      B
     }
   },
   computed: {

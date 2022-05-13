@@ -12,8 +12,11 @@
           {{ $t("subtitle.user") }}
         </div>
 
-        <div class="level-right">
+        <div
+          class="level-right"
+        >
           <button
+            :disabled="B.scopes['create:users'] ? false : true"
             class="button is-primary"
             @click.prevent="create"
           >
@@ -63,12 +66,14 @@
           <template slot-scope="props">
             <div class="has-text-centered">
               <button
+                :disable="B.scopes['update:users'] ? false : true"
                 class="button is-text"
                 @click.prevent="edit(props.item)"
               >
                 <octicon :icon="pencil" /> <span>{{ $t('edit') }}</span>
               </button>
               <button
+                :disable="B.scopes['delete:users'] ? false : true"
                 class="button is-text"
                 @click.prevent="destroy(props.item.username)"
               >
@@ -233,6 +238,7 @@ import { plus, x, pencil, clock, clippy } from 'octicons-vue'
 import alertify from 'alertify.js'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css'
+import { B } from '../global.js'
 
 export default {
   components: { DataTable, DataColumn, Modal, vSelect },
@@ -246,7 +252,8 @@ export default {
       filter: {},
       filterString: '',
       queryFailed: false,
-      groups: []
+      groups: [],
+      B
     }
   },
   computed: {

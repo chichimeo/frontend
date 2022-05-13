@@ -4,22 +4,23 @@
     style="margin-top: 0"
   >
     <dashboard>
-      <template slot="header-dropdown-menu">
+      <!-- <template slot="header-dropdown-menu">
         <a
           href="#"
           class="dropdown-item"
         >
           Foobar
         </a>
-      </template>
+      </template> -->
 
       <template slot="login-right">
         <div class="columns is-centered">
           <div class="column is-half">
             <img src="./assets/279052397_657448228686449_2987213060671790641_n.png">
             <a
-              href="https://google.com"
+              href="http://10.3.145.108:8082"
               class="button is-fullwidth is-primary"
+              target="blank"
             >
               Public Content
             </a>
