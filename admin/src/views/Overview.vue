@@ -15,10 +15,10 @@
           >
             <div class=" has-text-centered">
               <p class="heading">
-                {{ $l('newMalware','New Malware') }}
+                {{ $l('malwareToday','Malware New') }}
               </p>
               <p class="title">
-                {{ count }}
+                {{ count.newMalware }}
               </p>
             </div>
           </div>
@@ -35,10 +35,10 @@
           >
             <div class="has-text-centered">
               <p class="heading">
-                {{ $l('totalMalwares','Total Malwares') }}
+                {{ $l('totalMalware','Total Malware') }}
               </p>
               <p class="title">
-                {{ count }}
+                {{ count.total }}
               </p>
             </div>
           </div>
@@ -87,7 +87,7 @@
     </div>
     <box>
       <tabs :theme="$_ui_theme_tabs">
-        <tab :title="$l('components.overview.recentThreatEvents','Recent Malwares in My Database')">
+        <tab :title="$l('recentThreatEvents','Recent Malwares in My Database')">
           <line-chart
             canvas-height="270px"
             :picker="true"
@@ -123,7 +123,7 @@
               </div>
               <div class="container has-text-centered">
                 <p class="heading is-size-5">
-                  {{ $l('components.overview.detectedThreats','Detected Threats') }}
+                  {{ $l('detectedThreats','Detected Threats') }}
                 </p>
               </div>
             </div>
@@ -136,11 +136,11 @@
       <div class="column is-half">
         <box style="margin: 0; height: 100%;">
           <tabs :theme="$_ui_theme_tabs">
-            <tab :title="$l('components.overview.topInfectedClients','Sources in My Database')">
+            <tab :title="$l('sourcesInMyDB','Sources in My Database')">
               <bar-chart
                 :data="clientData"
                 :timestamp="clientDataFetchedAt"
-                :legend-title="$l('components.overview.clients','Clients')"
+                :legend-title="$l('overview.clients','Clients')"
                 @limited="clientDataFetchedAt = new Date()"
               />
             </tab>
@@ -151,7 +151,7 @@
       <div class="column is-half">
         <box style="margin: 0; height: 100%;">
           <tabs :theme="$_ui_theme_tabs">
-            <tab :title="$l('components.overview.category','Category')">
+            <tab :title="$l('engines','Engines')">
               <doughnut-chart
                 :data="categoryData"
                 :timestamp="categoryDataFetchedAt"
@@ -207,7 +207,10 @@ export default {
         startDate: daysAgo7.toISOString(),
         endDate: today.toISOString()
       },
-      count: 199,
+      count: {
+        newMalware: 0,
+        total: 0
+      },
       engines: {
         enabled: 0,
         total: 0
@@ -223,9 +226,7 @@ export default {
           let count = 0
 
           for (let item of this.redRawData[label]) {
-            if (item.label === '') {
-              item.label = 'others'
-            }
+            item.label = 'malware'
             if (item.label === category.name) {
               count = item.data
               break
@@ -251,7 +252,7 @@ export default {
       }
     },
     metadata () {
-      this.fetch()
+      this.fetchEventDateFrequency()
     },
     redData () {
       this.redDataFetchedAt = new Date()
@@ -265,209 +266,54 @@ export default {
       this.fetchEventCategory()
       this.fetchEventClient()
       this.fetchEventDateFrequency()
+      this.fetchNewMalware()
+      this.fetchTotal()
     },
     fetchEventDateFrequency () {
-      let data = {
-        categories: [
-          'file malware',
-          'malicious process',
-          'malicious task scheduler',
-          'malicious wmi',
-          'file malware-warning',
-          'malicious services',
-          'malicious key autorun',
-          'smb-attack-blocked'
-        ],
-        chart: {
-          '20220428': [
-            {
-              'label': 'file malware',
-              'data': 860,
-              'timestamp': '20220428'
-            },
-            {
-              'label': 'malicious process',
-              'data': 93,
-              'timestamp': '20220428'
-            },
-            {
-              'label': 'malicious task scheduler',
-              'data': 57,
-              'timestamp': '20220428'
-            },
-            {
-              'label': 'malicious wmi',
-              'data': 40,
-              'timestamp': '20220428'
-            },
-            {
-              'label': 'malicious key autorun',
-              'data': 9,
-              'timestamp': '20220428'
-            },
-            {
-              'label': 'file malware-warning',
-              'data': 6,
-              'timestamp': '20220428'
-            },
-            {
-              'label': 'malicious services',
-              'data': 1,
-              'timestamp': '20220428'
-            }
-          ],
-          '20220429': [
-            {
-              'label': 'file malware',
-              'data': 204,
-              'timestamp': '20220429'
-            },
-            {
-              'label': 'malicious task scheduler',
-              'data': 12,
-              'timestamp': '20220429'
-            },
-            {
-              'label': 'malicious process',
-              'data': 10,
-              'timestamp': '20220429'
-            },
-            {
-              'label': 'malicious wmi',
-              'data': 8,
-              'timestamp': '20220429'
-            },
-            {
-              'label': 'file malware-warning',
-              'data': 2,
-              'timestamp': '20220429'
-            },
-            {
-              'label': 'malicious services',
-              'data': 2,
-              'timestamp': '20220429'
-            }
-          ],
-          '20220430': [],
-          '20220501': [],
-          '20220502': [],
-          '20220503': [],
-          '20220504': [
-            {
-              'label': 'file malware',
-              'data': 8916,
-              'timestamp': '20220504'
-            },
-            {
-              'label': 'malicious process',
-              'data': 77,
-              'timestamp': '20220504'
-            },
-            {
-              'label': 'malicious task scheduler',
-              'data': 25,
-              'timestamp': '20220504'
-            },
-            {
-              'label': 'malicious wmi',
-              'data': 16,
-              'timestamp': '20220504'
-            },
-            {
-              'label': 'file malware-warning',
-              'data': 7,
-              'timestamp': '20220504'
-            },
-            {
-              'label': 'smb-attack-blocked',
-              'data': 1,
-              'timestamp': '20220504'
-            },
-            {
-              'label': 'malicious services',
-              'data': 1,
-              'timestamp': '20220504'
-            }
-          ],
-          '20220505': [
-            {
-              'label': 'file malware',
-              'data': 40692,
-              'timestamp': '20220505'
-            },
-            {
-              'label': 'malicious process',
-              'data': 105,
-              'timestamp': '20220505'
-            },
-            {
-              'label': 'malicious task scheduler',
-              'data': 24,
-              'timestamp': '20220505'
-            },
-            {
-              'label': 'malicious wmi',
-              'data': 16,
-              'timestamp': '20220505'
-            },
-            {
-              'label': 'file malware-warning',
-              'data': 6,
-              'timestamp': '20220505'
-            },
-            {
-              'label': 'malicious services',
-              'data': 3,
-              'timestamp': '20220505'
-            }
-          ]
+      this.clientDataFetchedAt = null
+      return this.$http.get(`/api/v1/overview/malware/frequency/date?startDate=${this.metadata.startDate}&endDate=${this.metadata.endDate}`).then(body => {
+        if (!body || !body.data || !body.data.data) {
+          return
         }
-      }
-      this.categories = []
-      data.categories.forEach((e, i) => {
-        let disabled = false
-        if (e === '') {
-          e = 'others'
-          disabled = true
-        }
+        this.categories = []
+        // body.data.data.categories.forEach((e, i) => {
+        //   let disabled = false
+        //   e = 'malware'
+        //   if (e === '') {
+        //     e = 'others'
+        //     disabled = true
+        //   }
         this.categories.push({
-          name: e,
-          disabled: disabled,
-          backgroundColor: this.colors.default[i],
-          borderColor: this.colors.default[i],
-          pointBackgroundColor: this.colors.lighter[i],
-          pointHoverBackgroundColor: this.colors.lighter[i],
-          pointHoverBorderColor: this.colors.darker[i]
+          name: 'malware',
+          disabled: false,
+          backgroundColor: this.colors.default[0],
+          borderColor: this.colors.default[0],
+          pointBackgroundColor: this.colors.lighter[0],
+          pointHoverBackgroundColor: this.colors.lighter[0],
+          pointHoverBorderColor: this.colors.darker[0]
         })
+        // })
+        this.redRawData = body.data.data.chart
       })
-      this.redRawData = data.chart
     },
     fetchEventClient () {
       this.clientDataFetchedAt = null
-      let data = [
-        {
-          'label': 'VirusShare',
-          'data': 2335
-        },
-        {
-          'label': 'Malshare',
-          'data': 1862
-        },
-        {
-          'label': 'Engine Virus',
-          'data': 1754
+      return this.$http.get(`/api/v1/overview/malware/bytype`).then(body => {
+        if (!body || !body.data || !body.data.data) {
+          return
         }
-      ]
-      this.clientData = {
-        data: data.map(e => { return e.data }),
-        labels: data.map(e => {
-          if (e.label === '') {
-            return 'Others'
-          }
-          return e.label
-        })
-      }
-      this.clientDataFetchedAt = new Date()
+        this.clientData = {
+          data: body.data.data.map(e => { return e.Data }),
+          labels: body.data.data.map(e => {
+            if (e.Label === '') {
+              return 'Others'
+            }
+            return e.Label
+          })
+        }
+      }).then(() => {
+        this.clientDataFetchedAt = new Date()
+      })
     },
     fetchEventCategory () {
       this.categoryDataFetchedAt = null
@@ -506,6 +352,22 @@ export default {
       category.disabled = !category.disabled
 
       this.categories.splice(index, 1, category)
+    },
+    fetchNewMalware () {
+      return this.$http.get(`/api/v1/overview/malware/new`).then(body => {
+        if (!body || !body.data || !body.data.data) {
+          return
+        }
+        this.count.newMalware = body.data.data
+      })
+    },
+    fetchTotal () {
+      return this.$http.get(`/api/v1/overview/malware/total`).then(body => {
+        if (!body || !body.data || !body.data.data) {
+          return
+        }
+        this.count.total = body.data.data
+      })
     }
   }
 }

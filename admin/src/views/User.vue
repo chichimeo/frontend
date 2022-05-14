@@ -26,9 +26,9 @@
       </div>
     </h2>
     <box>
-      <div>
+      <!-- <div>
         <octicon :icon="bug" :scale="2.5" /> <div class="title">{{ $t('Virus Share') }}</div>
-      </div>
+      </div> -->
       <div>
         <input
           v-model="filterString"
