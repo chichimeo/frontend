@@ -16,7 +16,7 @@
 
         <div class="level-right">
           <button
-            :disabled="B.scopes['create:groups'] ? false : true"
+            :disabled="scopes['create:groups'] ? false : true"
             class="button is-primary"
             @click.prevent="modal = !modal"
           >
@@ -72,7 +72,7 @@
           <template slot-scope="props">
             <div class="has-text-centered">
               <button
-                :disabled="B.scopes['read:groups'] ? false :true"
+                :disabled="scopes['read:groups'] ? false :true"
                 class="button is-text"
                 @click.prevent="$router.push({
                   name: 'group-details',
@@ -82,7 +82,7 @@
                 <octicon :icon="eye" /> <span>{{ $t('details') }}</span>
               </button>
               <button
-                :disabled="B.scopes['update:groups'] ? false :true"
+                :disabled="scopes['update:groups'] ? false :true"
                 class="button is-text"
                 @click.prevent="$router.push({
                   name: 'group-update',
@@ -92,7 +92,7 @@
                 <octicon :icon="pencil" /> <span>{{ $t('edit') }}</span>
               </button>
               <button
-                :disabled="B.scopes['delete:groups'] ? false :true"
+                :disabled="scopes['delete:groups'] ? false :true"
                 class="button is-text"
                 @click.prevent="destroy(props.item.name)"
               >
@@ -196,7 +196,7 @@ export default {
       return eye
     },
     ...mapGetters([
-      'currentLocale'
+      'currentLocale', 'scopes'
     ])
   },
   methods: {

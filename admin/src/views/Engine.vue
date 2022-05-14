@@ -104,21 +104,21 @@
           <template slot-scope="props">
             <div class="has-text-centered">
               <button
-                :disabled="B.scopes['update:engines'] ? false : true"
+                :disabled="scopes['update:engines'] ? false : true"
                 class="button is-text"
                 @click.prevent="toggleItemStatus(props.item.name)"
               >
                 <octicon :icon="sync" /> <span>{{ !props.item.enabled ? $t('enabled') : $t('disabled') }}</span>
               </button>
               <button
-                :disabled="B.scopes['update:engines']? false : true"
+                :disabled="scopes['update:engines']? false : true"
                 class="button is-text"
                 @click.prevent="edit(props.item)"
               >
                 <octicon :icon="pencil" /> <span>{{ $t('edit') }}</span>
               </button>
               <button
-                :disabled="B.scopes['delete:engines']? false : true"
+                :disabled="scopes['delete:engines']? false : true"
                 class="button is-text"
                 @click.prevent="destroy(props.item.name)"
               >
@@ -255,7 +255,7 @@ export default {
       return sync
     },
     ...mapGetters([
-      'currentLocale'
+      'currentLocale', 'scopes'
     ])
   },
   methods: {

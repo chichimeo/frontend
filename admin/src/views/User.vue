@@ -16,7 +16,7 @@
           class="level-right"
         >
           <button
-            :disabled="B.scopes['create:users'] ? false : true"
+            :disabled="scopes['create:users'] ? false : true"
             class="button is-primary"
             @click.prevent="create"
           >
@@ -71,14 +71,14 @@
           <template slot-scope="props">
             <div class="has-text-centered">
               <button
-                :disable="B.scopes['update:users'] ? false : true"
+                :disable="scopes['update:users'] ? false : true"
                 class="button is-text"
                 @click.prevent="edit(props.item)"
               >
                 <octicon :icon="pencil" /> <span>{{ $t('edit') }}</span>
               </button>
               <button
-                :disable="B.scopes['delete:users'] ? false : true"
+                :disable="scopes['delete:users'] ? false : true"
                 class="button is-text"
                 @click.prevent="destroy(props.item.username)"
               >
@@ -124,6 +124,7 @@
                     type="text"
                     class="input"
                     placeholder="Username"
+                    required
                   >
                   <input
                     v-if="formType === 'update'"
@@ -132,6 +133,7 @@
                     type="text"
                     class="input"
                     placeholder="Username"
+                    required
                   >
                 </div>
               </div>
@@ -139,7 +141,7 @@
                 v-if="formType === 'update'"
                 class="field"
               >
-                <div v-if="item.type === 0 || !isAdmin">
+                <div v-if="item.type === 0">
                   <label class="label">{{ $l('oldPassword','Old Password') }}</label>
                   <div class="control">
                     <input
@@ -280,7 +282,8 @@ export default {
       return clippy
     },
     ...mapGetters([
-      'currentLocale'
+      'currentLocale',
+      'scopes'
     ])
   },
   mounted () {

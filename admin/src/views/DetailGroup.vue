@@ -38,7 +38,7 @@
               </div>
               <div class="column is-narrow">
                 <button
-                  :disabled="B.scopes['update:groups'] ? false : true"
+                  :disabled="scopes['update:groups'] ? false : true"
                   class="button is-primary is-small is- is-light"
                   @click.prevent="customizePermission"
                 >
@@ -158,7 +158,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'currentLocale'
+      'currentLocale', 'scopes'
     ])
   },
   data () {

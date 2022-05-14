@@ -1,3 +1,5 @@
+// eslint-disable-next-line camelcase
+import jwt_decode from 'jwt-decode'
 
 export default {
   state: {
@@ -29,6 +31,10 @@ export default {
     },
     authenticationToken: state => {
       return state.authentication.token
+    },
+    scopes: state => {
+      console.log('state.authentication.token', state.authentication.token)
+      return jwt_decode(state.authentication.token).scopes.reduce((a, v) => ({ ...a, [v]: true }), {})
     },
     languages: state => {
       return state.ui.languages
