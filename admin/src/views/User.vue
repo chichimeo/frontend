@@ -42,6 +42,7 @@
 
       <data-table
         ref="table"
+        :key="currentLocale"
         :items="items"
         :theme="$_ui_theme_tables"
         sort-by="id"
@@ -59,7 +60,7 @@
         />
         <data-column
           field="group"
-          :label="$l('components.user.group','Group')"
+          :label="$l('group','Group')"
         />
         <data-column
           :label="$t('actions')"
@@ -139,7 +140,7 @@
                 class="field"
               >
                 <div v-if="item.type === 0 || !isAdmin">
-                  <label class="label">{{ $l('components.user.oldPassword','Old Password') }}</label>
+                  <label class="label">{{ $l('oldPassword','Old Password') }}</label>
                   <div class="control">
                     <input
                       v-model="item.oldPassword"
@@ -151,7 +152,7 @@
                 </div>
               </div>
               <div class="field">
-                <label class="label">{{ $l('components.user.password','Password') }}</label>
+                <label class="label">{{ $l('password','Password') }}</label>
                 <div class="control">
                   <input
                     v-model="item.password"
@@ -162,7 +163,7 @@
                 </div>
               </div>
               <div class="field">
-                <label class="label">{{ $l('components.user.confirmPassword','Confirm Password') }}</label>
+                <label class="label">{{ $l('confirmPassword','Confirm Password') }}</label>
                 <div class="control">
                   <input
                     v-model="item.confirmPassword"
@@ -243,6 +244,7 @@ import alertify from 'alertify.js'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css'
 import { B } from '../global.js'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { DataTable, DataColumn, Modal, vSelect },
@@ -276,7 +278,10 @@ export default {
     },
     clippy () {
       return clippy
-    }
+    },
+    ...mapGetters([
+      'currentLocale'
+    ])
   },
   mounted () {
     this.getGroups()

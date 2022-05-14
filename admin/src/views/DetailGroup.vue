@@ -64,6 +64,7 @@
             </div>
             <data-table
               ref="table"
+              :key="currentLocale"
               :items="permissions"
               :theme="$_ui_theme_tables"
               sort-by="id"
@@ -144,6 +145,7 @@ import { DataTable, DataColumn } from '@cyradar/ui'
 import { arrowSmallLeft, check, sync } from 'octicons-vue'
 import 'vue-select/dist/vue-select.css'
 import { B } from '../global.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'GroupDetails',
@@ -153,6 +155,11 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  computed: {
+    ...mapGetters([
+      'currentLocale'
+    ])
   },
   data () {
     return {

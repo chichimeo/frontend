@@ -5,7 +5,7 @@ import './../node_modules/bulma/css/bulma.css'
 import localization from './localization'
 import routes from './routes'
 import { authentication } from './api'
-import Vuex from 'vuex'
+import store from './store'
 
 Vue.use(UI)
 Vue.config.productionTip = false
@@ -47,16 +47,6 @@ Vue.mixin({
   }
 }
 )
-const store = new Vuex.Store({
-  state: {
-    fileDetails: null
-  },
-  mutations: {
-    loadFileDetails (state, fileDetails) {
-      state.fileDetails = fileDetails
-    }
-  }
-})
 const ui = new UI({
   auth: true,
   routes,

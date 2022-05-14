@@ -39,6 +39,7 @@
 
       <data-table
         ref="table"
+        :key="currentLocale"
         :items="items"
         :theme="$_ui_theme_tables"
         sort-by="id"
@@ -161,6 +162,7 @@ import { eye, plus, x, pencil, clock, clippy } from 'octicons-vue'
 import clipboard from '@/clipboard.js'
 import alertify from 'alertify.js'
 import { B } from '../global.js'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { DataTable, DataColumn, Modal },
@@ -192,7 +194,10 @@ export default {
     },
     eye () {
       return eye
-    }
+    },
+    ...mapGetters([
+      'currentLocale'
+    ])
   },
   methods: {
     items (filter, order, pagination) {
